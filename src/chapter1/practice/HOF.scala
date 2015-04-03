@@ -2,7 +2,7 @@ package chapter1.practice
 
 object HOF extends App {
 
-  //find index of first occurrence
+  //returns the first index in an array where the key occurs, or -1 if it’s not found
   //polymorphic function (or generic function)
   def findFirst[A](as: Array[A], p: A => Boolean): Int = {
     @annotation.tailrec

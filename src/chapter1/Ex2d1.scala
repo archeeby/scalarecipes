@@ -1,6 +1,8 @@
 package chapter1
 
-class Ex2d1 {
+object Ex2d1 {
+
+  //gets the n-th Fibonacci number
   def fib(n : Int) : Int = {
     @annotation.tailrec
     def go(n : Int, a : Int, b : Int) : Int = {
@@ -11,4 +13,7 @@ class Ex2d1 {
     go(n, 0, 1)
   }
 
+  def main(args: Array[String]) : Unit = {
+    println(fib(10))
+  }
 }
