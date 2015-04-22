@@ -9,8 +9,7 @@ object Loops extends App {
     go(n, 1)
   }
 
-
   //RUN
   val n = 5
-  print("factorial of " + n + " is " + factorial(5))
+  print("factorial of " + n + " is " + factorial(n))
 }
