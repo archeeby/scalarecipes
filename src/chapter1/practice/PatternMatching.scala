@@ -31,4 +31,9 @@ object PatternMatching extends App {
   println(List.product(Nil))
   println(List.product(doubleListWithZero))
   println(List.product(doubleList))
+
+  println(List(1,2,3) match { case _ => 42 })
+  println(List(1,2,3) match { case Cons(h,_) => h })
+  println(List(1,2,3) match { case Cons(_,t) => t })
+  //println(List(1,2,3) match { case Nil => 42 }) -> produces scala.MatchError
 }
