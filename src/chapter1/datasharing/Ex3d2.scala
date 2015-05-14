@@ -46,7 +46,16 @@ object List {
     go(n, list)
   }
 
-
+  //removes elements from the List prefix as long as they match a predicate.
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = {
+    def loop(innerList: List[A]): List[A] = innerList match {
+      case Cons(x, xs) =>
+        if (f(x)) loop(xs)
+        else Cons(x, xs)
+      case Nil => Nil
+    }
+    loop(l)
+  }
 }
 
 object Ex3d2 extends App {
@@ -58,4 +67,8 @@ object Ex3d2 extends App {
   println("tail: " + List.tail(l1))
   println("setHead: " + List.setHead(0, l1))
   println("remove " + n + " elements: " + List.drop(n, l1))
+
+  val l2 = List(0, 1, 2, 3, 4)
+  val f = (x : Int) => x != 2
+  println(List.dropWhile(l2, f)) //remove elements from left to right until x!=2
 }
