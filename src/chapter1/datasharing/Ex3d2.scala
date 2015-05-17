@@ -48,6 +48,7 @@ object List {
 
   //removes elements from the List prefix as long as they match a predicate.
   def dropWhile[A](l: List[A], f: A => Boolean): List[A] = {
+    @annotation.tailrec
     def loop(innerList: List[A]): List[A] = innerList match {
       case Cons(x, xs) =>
         if (f(x)) loop(xs)
@@ -56,6 +57,21 @@ object List {
     }
     loop(l)
   }
+
+  // adds all the elements of one list to the end of another  !!!
+  def append[A](a1: List[A], a2: List[A]): List[A] =
+    a1 match {
+      case Nil => a2
+      case Cons(x, xs) => Cons(x, append(xs, a2))
+    }
+
+
+  def init[A](l: List[A]): List[A] =
+    l match {
+      case Nil => Nil
+      case Cons(_, Nil) => Nil
+      case Cons(x, xs) => Cons(x, init(xs))
+    }
 }
 
 object Ex3d2 extends App {
@@ -70,5 +86,10 @@ object Ex3d2 extends App {
 
   val l2 = List(0, 1, 2, 3, 4)
   val f = (x : Int) => x != 2
-  println(List.dropWhile(l2, f)) //remove elements from left to right until x!=2
+  println("drop while: " + List.dropWhile(l2, f)) //remove elements from left to right until x!=2
+
+  val c1 = List("A", "B", "C")
+  val c2 = List("D", "E")
+  println("append: " + List.append(c1, c2))
+  println("init: " + List.init(c1))
 }
