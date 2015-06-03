@@ -1,55 +1,55 @@
 package chapter1.datasharing
 
-sealed trait List[+A]
+sealed trait CustomList[+A]
 
-case class Cons[+A](head: A, tail: List[A]) extends List[A]
+case class Cons[+A](head: A, tail: CustomList[A]) extends CustomList[A]
 
-case object Nil extends List[Nothing]
+case object Nil extends CustomList[Nothing]
 
-object List {
+object CustomList {
   //returns size of list
-  def size[A](list: List[A]): Integer = {
+  def size[A](list: CustomList[A]): Integer = {
     @annotation.tailrec
-    def go(n: Integer, innerList: List[A]): Integer = innerList match {
+    def go(n: Integer, innerList: CustomList[A]): Integer = innerList match {
       case Nil => n
       case Cons(_, xs) => go(n + 1, xs)
     }
     go(0, list)
   }
 
-  def apply[A](as: A*): List[A] =
+  def apply[A](as: A*): CustomList[A] =
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
 
   //returns a tail of
-  def tail[A](list: List[A]): List[A] = list match {
+  def tail[A](list: CustomList[A]): CustomList[A] = list match {
     case Nil => Nil
     case Cons(_, Nil) => Nil
     case Cons(_, xs) => xs
   }
 
   //replace first element of collection
-  def setHead[A](a: A, list: List[A]): List[A] = list match {
-    case Nil => List(a)
+  def setHead[A](a: A, list: CustomList[A]): CustomList[A] = list match {
+    case Nil => CustomList(a)
     case Cons(_, xs) => Cons(a, xs)
   }
 
   //removes n first elements of list
   //TODO use pattern matching
-  def drop[A](n: Int, list: List[A]): List[A] = {
+  def drop[A](n: Int, list: CustomList[A]): CustomList[A] = {
     @annotation.tailrec
-    def go(n: Int, innerList: List[A]) : List[A] = {
+    def go(n: Int, innerList: CustomList[A]) : CustomList[A] = {
       if (n == 0) innerList
-      else go(n - 1, List.tail(innerList))
+      else go(n - 1, CustomList.tail(innerList))
     }
 
     go(n, list)
   }
 
   //removes elements from the List prefix as long as they match a predicate.
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = {
+  def dropWhile[A](l: CustomList[A], f: A => Boolean): CustomList[A] = {
     @annotation.tailrec
-    def loop(innerList: List[A]): List[A] = innerList match {
+    def loop(innerList: CustomList[A]): CustomList[A] = innerList match {
       case Cons(x, xs) =>
         if (f(x)) loop(xs)
         else Cons(x, xs)
@@ -58,15 +58,22 @@ object List {
     loop(l)
   }
 
+  def dropWhile2[A](l: CustomList[A])(f: A => Boolean): CustomList[A] = {
+    l match {
+      case Cons(x, xs) if f(x) => dropWhile2(xs)(f)
+      case _ => l
+    }
+  }
+
   // adds all the elements of one list to the end of another  !!!
-  def append[A](a1: List[A], a2: List[A]): List[A] =
+  def append[A](a1: CustomList[A], a2: CustomList[A]): CustomList[A] =
     a1 match {
       case Nil => a2
       case Cons(x, xs) => Cons(x, append(xs, a2))
     }
 
 
-  def init[A](l: List[A]): List[A] =
+  def init[A](l: CustomList[A]): CustomList[A] =
     l match {
       case Nil => Nil
       case Cons(_, Nil) => Nil
@@ -75,21 +82,22 @@ object List {
 }
 
 object Ex3d2 extends App {
-  val l1 = List(1, 3, 6, 3, 4, 2, -1, 7, 0)
+  val l1 = CustomList(1, 3, 6, 3, 4, 2, -1, 7, 0)
   val n = 3
 
   println(l1)
-  println("size: " + List.size(l1))
-  println("tail: " + List.tail(l1))
-  println("setHead: " + List.setHead(0, l1))
-  println("remove " + n + " elements: " + List.drop(n, l1))
+  println("size: " + CustomList.size(l1))
+  println("tail: " + CustomList.tail(l1))
+  println("setHead: " + CustomList.setHead(0, l1))
+  println("remove " + n + " elements: " + CustomList.drop(n, l1))
 
-  val l2 = List(0, 1, 2, 3, 4)
+  val l2 = CustomList(0, 1, 2, 3, 4)
   val f = (x : Int) => x != 2
-  println("drop while: " + List.dropWhile(l2, f)) //remove elements from left to right until x!=2
+  println("drop while: " + CustomList.dropWhile(l2, f)) //remove elements from left to right until x!=2
 
-  val c1 = List("A", "B", "C")
-  val c2 = List("D", "E")
-  println("append: " + List.append(c1, c2))
-  println("init: " + List.init(c1))
+  val c1 = CustomList("A", "B", "C")
+  val c2 = CustomList("D", "E")
+  println("append: " + CustomList.append(c1, c2))
+  println("init: " + CustomList.init(c1))
+
 }
