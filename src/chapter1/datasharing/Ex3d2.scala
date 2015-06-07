@@ -79,10 +79,24 @@ object CustomList {
       case Cons(_, Nil) => Nil
       case Cons(x, xs) => Cons(x, init(xs))
     }
+
+  /////////////////////////////////////////////////////////////////////////
+  def foldRight[A,B](as: CustomList[A], z: B)(f: (A, B) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
+
+  def sum2(ns: CustomList[Int]) : Int =
+    foldRight(ns, 0)((x,y) => x + y)
+
+  def product2(ns: CustomList[Double]) : Double =
+    foldRight(ns, 1.0)(_ * _)
 }
 
 object Ex3d2 extends App {
   val l1 = CustomList(1, 3, 6, 3, 4, 2, -1, 7, 0)
+  val l11 = CustomList(1.0, 3.0, 6.0, 3.0, 4.0, 2.0, -1.0, 7.0)
   val n = 3
 
   println(l1)
@@ -100,4 +114,6 @@ object Ex3d2 extends App {
   println("append: " + CustomList.append(c1, c2))
   println("init: " + CustomList.init(c1))
 
+  println("sum2: " + CustomList.sum2(l1))
+  println("product2: " + CustomList.product2(l11))
 }
