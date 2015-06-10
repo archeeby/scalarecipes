@@ -81,11 +81,20 @@ object CustomList {
     }
 
   /////////////////////////////////////////////////////////////////////////
-  def foldRight[A,B](as: CustomList[A], z: B)(f: (A, B) => B): B =
-    as match {
+  def foldRight[A,B](list: CustomList[A], z: B)(f: (A, B) => B): B =
+    list match {
       case Nil => z
       case Cons(x, xs) => f(x, foldRight(xs, z)(f))
     }
+
+  //tail-recursive fold-left
+  @annotation.tailrec
+  def foldLeft[A,B](list: CustomList[A], z: B)(f: (B, A) => B): B = {
+    list match {
+      case Nil => z
+      case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+    }
+  }
 
   def sum2(ns: CustomList[Int]) : Int =
     foldRight(ns, 0)((x,y) => x + y)
@@ -121,4 +130,18 @@ object Ex3d2 extends App {
   println("sum2: " + CustomList.sum2(l1))
   println("product2: " + CustomList.product2(l11))
   println("length: " + CustomList.length(l1))
+  println("-----------------------\n")
+
+  val l3 = CustomList(1, 2, 3)
+  def func(x : Int, y : Int) : Int = {
+    println("x: " + x + ", y: " + y)
+    x - y
+  }
+
+  println(l3)
+  println("foldRight: ")
+  println("result: " + CustomList.foldRight(l3, 0)((x, y) => func(x, y)))
+
+  println("foldLeft: ")
+  println("result: " + CustomList.foldLeft(l3, 0)((x, y) => func(x, y)))
 }
