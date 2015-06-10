@@ -92,6 +92,10 @@ object CustomList {
 
   def product2(ns: CustomList[Double]) : Double =
     foldRight(ns, 1.0)(_ * _)
+
+  def length[A](as: CustomList[A]): Int = {
+    foldRight(as, 0)((_, count) => count + 1)
+  }
 }
 
 object Ex3d2 extends App {
@@ -116,4 +120,5 @@ object Ex3d2 extends App {
 
   println("sum2: " + CustomList.sum2(l1))
   println("product2: " + CustomList.product2(l11))
+  println("length: " + CustomList.length(l1))
 }
