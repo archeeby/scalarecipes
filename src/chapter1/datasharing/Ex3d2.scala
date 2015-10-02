@@ -89,11 +89,9 @@ object CustomList {
 
   //tail-recursive fold-left
   @annotation.tailrec
-  def foldLeft[A,B](list: CustomList[A], z: B)(f: (B, A) => B): B = {
-    list match {
-      case Nil => z
-      case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
-    }
+  def foldLeft[A, B](list: CustomList[A], z: B)(f: (B, A) => B): B = list match {
+    case Nil => z
+    case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
   }
 
   def sum2(ns: CustomList[Int]) : Int =
@@ -109,6 +107,10 @@ object CustomList {
   def length2[A](as: CustomList[A]): Int = {
     foldLeft(as, 0)((count, _) => count + 1)
   }
+
+  def reverse[A](in: CustomList[A]): CustomList[A] =
+    foldLeft(in, CustomList[A]())((x, y) => Cons(y, x))
+
 }
 
 object Ex3d2 extends App {
@@ -149,4 +151,6 @@ object Ex3d2 extends App {
 
   println("foldLeft: ")
   println("result: " + CustomList.foldLeft(l3, 0)((x, y) => func(x, y)))
+
+  println(CustomList.reverse(l3))
 }
