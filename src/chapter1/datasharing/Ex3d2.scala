@@ -111,6 +111,10 @@ object CustomList {
   def reverse[A](in: CustomList[A]): CustomList[A] =
     foldLeft(in, CustomList[A]())((x, y) => Cons(y, x))
 
+  def append2[A](first: CustomList[A], second: CustomList[A]) : CustomList[A] = {
+    foldRight(first, second)(Cons(_, _))
+  }
+
 }
 
 object Ex3d2 extends App {
@@ -153,4 +157,5 @@ object Ex3d2 extends App {
   println("result: " + CustomList.foldLeft(l3, 0)((x, y) => func(x, y)))
 
   println(CustomList.reverse(l3))
+  println(CustomList.append2(c1, c2))
 }
