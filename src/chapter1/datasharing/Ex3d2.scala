@@ -112,7 +112,7 @@ object CustomList {
     foldLeft(in, CustomList[A]())((x, y) => Cons(y, x))
 
   def append2[A](first: CustomList[A], second: CustomList[A]) : CustomList[A] = {
-    foldRight(first, second)(Cons(_, _))
+    foldRight(first, second)(Cons(_, _)) // Cons(_, _)  is   (x, y) => Cons(x, y)
   }
 
 }
