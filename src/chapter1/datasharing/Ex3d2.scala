@@ -118,9 +118,12 @@ object CustomList {
     foldRight(list, (b:B) => b)((a,g) => b => g(f(b,a)))(z)
 
   def append2[A](first: CustomList[A], second: CustomList[A]) : CustomList[A] = {
-    foldRight(first, second)(Cons(_, _)) // Cons(_, _)  is   (x, y) => Cons(x, y)
+    foldRight(first, second)(Cons(_, _)) // or   (x, y) => Cons(x, y)
   }
 
+  def concat[A](in: CustomList[CustomList[A]]): CustomList[A] = {
+    foldLeft(in, CustomList[A]())(append2(_, _)) // or (x, y) => append2(x, y)
+  }
 }
 
 object Ex3d2 extends App {
@@ -164,4 +167,7 @@ object Ex3d2 extends App {
 
   println(CustomList.reverse(l3))
   println(CustomList.append2(c1, c2))
+
+  val nestedList = CustomList(CustomList("A", "B", "C"), CustomList("D"), CustomList("E", "F", "G"))
+  println(CustomList.concat(nestedList))
 }
