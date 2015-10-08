@@ -15,4 +15,6 @@ object Ex2d3 extends App {
   val a1 = curry[Int, Int, Int](_ - _)
   val b1 = a1(5)(1)
   println(b1)
+
+  println(curry[Int, Int, Int](_ - _)(5)(1))
 }
