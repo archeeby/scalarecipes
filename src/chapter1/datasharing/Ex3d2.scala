@@ -124,6 +124,10 @@ object CustomList {
   def concat[A](in: CustomList[CustomList[A]]): CustomList[A] = {
     foldLeft(in, CustomList[A]())(append2(_, _)) // or (x, y) => append2(x, y)
   }
+
+  def transform(in: CustomList[Int]): CustomList[Int] = {
+    foldRight(in, CustomList[Int]())((x, y) => Cons(x + 1, y))
+  }
 }
 
 object Ex3d2 extends App {
@@ -170,4 +174,6 @@ object Ex3d2 extends App {
 
   val nestedList = CustomList(CustomList("A", "B", "C"), CustomList("D"), CustomList("E", "F", "G"))
   println(CustomList.concat(nestedList))
+
+  println(CustomList.transform(CustomList(1,2,3)))
 }
