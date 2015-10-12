@@ -128,6 +128,10 @@ object CustomList {
   def transform(in: CustomList[Int]): CustomList[Int] = {
     foldRight(in, CustomList[Int]())((x, y) => Cons(x + 1, y))
   }
+
+  def map[A,B](as: CustomList[A])(f: A => B): CustomList[B] = {
+    foldRight(as, CustomList[B]())((x, y) => Cons(f(x), y))
+  }
 }
 
 object Ex3d2 extends App {
@@ -176,4 +180,5 @@ object Ex3d2 extends App {
   println(CustomList.concat(nestedList))
 
   println(CustomList.transform(CustomList(1,2,3)))
+  println(CustomList.map(CustomList(1,2,3))(x => "ITEM" + x.toString))
 }
