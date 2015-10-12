@@ -147,6 +147,10 @@ object CustomList {
 
     loop(reverse(as), CustomList[A]())
   }
+
+  def filter2[A](as: CustomList[A])(f: A => Boolean): CustomList[A] = {
+    foldRight(as, CustomList[A]())((x, y) => if (f(x)) Cons(x, y) else y)
+  }
 }
 
 object Ex3d2 extends App {
@@ -197,4 +201,5 @@ object Ex3d2 extends App {
   println(CustomList.transform(CustomList(1,2,3)))
   println(CustomList.map(CustomList(1,2,3))(x => "ITEM" + x.toString))
   println(CustomList.filter(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
+  println(CustomList.filter2(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
 }
