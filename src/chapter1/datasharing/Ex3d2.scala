@@ -153,6 +153,12 @@ object CustomList {
   def flatMap[A,B](as: CustomList[A])(f: A => CustomList[B]): CustomList[B] = {
     concat(foldRight(as, CustomList[CustomList[B]]())((x, y) => Cons(f(x), y)))
   }
+
+  //via flatMap
+  def filter3[A](list: CustomList[A])(f: A => Boolean): CustomList[A] = {
+    flatMap(list)((x) => if (f(x)) CustomList[A](x) else Nil)
+  }
+
 }
 
 object Ex3d2 extends App {
@@ -204,5 +210,6 @@ object Ex3d2 extends App {
   println(CustomList.map(CustomList(1,2,3))(x => "ITEM" + x.toString))
   println(CustomList.filter(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
   println(CustomList.filter2(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
+  println(CustomList.filter3(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
   println(CustomList.flatMap(CustomList(1,2,3))(x => CustomList(x, x, 2 * x)))
 }
