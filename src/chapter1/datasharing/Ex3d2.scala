@@ -1,7 +1,5 @@
 package chapter1.datasharing
 
-import chapter1.datasharing
-
 sealed trait CustomList[+A]
 
 case class Cons[+A](head: A, tail: CustomList[A]) extends CustomList[A]
@@ -151,6 +149,10 @@ object CustomList {
   def filter2[A](as: CustomList[A])(f: A => Boolean): CustomList[A] = {
     foldRight(as, CustomList[A]())((x, y) => if (f(x)) Cons(x, y) else y)
   }
+
+  def flatMap[A,B](as: CustomList[A])(f: A => CustomList[B]): CustomList[B] = {
+    concat(foldRight(as, CustomList[CustomList[B]]())((x, y) => Cons(f(x), y)))
+  }
 }
 
 object Ex3d2 extends App {
@@ -202,4 +204,5 @@ object Ex3d2 extends App {
   println(CustomList.map(CustomList(1,2,3))(x => "ITEM" + x.toString))
   println(CustomList.filter(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
   println(CustomList.filter2(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
+  println(CustomList.flatMap(CustomList(1,2,3))(x => CustomList(x, x, 2 * x)))
 }
