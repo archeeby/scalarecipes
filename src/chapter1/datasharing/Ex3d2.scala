@@ -159,6 +159,11 @@ object CustomList {
     flatMap(list)((x) => if (f(x)) CustomList[A](x) else Nil)
   }
 
+  def zipWith[A](first: CustomList[A], second: CustomList[A])(f: (A, A) => A): CustomList[A] = (first, second) match {
+    case (_, Nil) => Nil
+    case (Nil, _) => Nil
+    case (Cons(x1, xs1), Cons(x2, xs2)) => Cons(f(x1, x2), zipWith(xs1, xs2)(f))
+  }
 }
 
 object Ex3d2 extends App {
@@ -212,4 +217,5 @@ object Ex3d2 extends App {
   println(CustomList.filter2(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
   println(CustomList.filter3(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
   println(CustomList.flatMap(CustomList(1,2,3))(x => CustomList(x, x, 2 * x)))
+  println(CustomList.zipWith(CustomList(1, 2, 3), CustomList(2, 2, 2))(_ + _))
 }
