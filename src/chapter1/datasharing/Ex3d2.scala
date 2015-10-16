@@ -164,6 +164,72 @@ object CustomList {
     case (Nil, _) => Nil
     case (Cons(x1, xs1), Cons(x2, xs2)) => Cons(f(x1, x2), zipWith(xs1, xs2)(f))
   }
+
+
+  def hasSubsequence[A](sup: CustomList[A], sub: CustomList[A]): Boolean = {
+    @annotation.tailrec
+    def find(list: CustomList[A], subList: CustomList[A], stepsLeft: Integer) : Boolean = {
+      @annotation.tailrec
+      def run[A](innerList: CustomList[A], sequence: CustomList[A], flag: Boolean): Boolean = {
+        (innerList, sequence) match {
+          case (Cons(x1, _), Cons(x2, Nil)) => x1 == x2 && flag
+          case (Cons(x1, xs1), Cons(x2, xs2)) =>
+            if (x1 == x2 && flag) run(xs1, xs2, flag)
+            else false
+        }
+      }
+
+      (list, subList) match {
+        case (_, Nil) => true
+        case (Nil, _) => false
+        case (Cons(x, xt), Cons(y, yt)) =>
+          if (stepsLeft >= 0)
+            if ((x == y) && run(list, subList, true)) true
+            else find(xt, subList, stepsLeft - 1)
+          else
+            run(list, subList, true)
+      }
+    }
+
+    find(sup, sub, size(sup) - size(sub))
+  }
+
+  @annotation.tailrec
+  def hasSubsequence2[A](l: CustomList[A], sub: CustomList[A]): Boolean = {
+    // if subsequence is empty
+    if(isEmpty(sub)) return false
+
+    //head of subsequence structure
+    val hd = head(sub)
+
+    //checking sequences equality
+    //note: sequences are considered to be equal, if
+    @annotation.tailrec
+    def eqCheck(a: CustomList[A], b: CustomList[A]): Boolean = (a, b) match {
+      case (_, Nil) => true
+      case (Nil, _) => false
+      case (Cons(h1, t1), Cons(h2, t2)) => if(h1 == h2) eqCheck(t1, t2) else false
+    }
+
+    dropWhile2(l)(_ == hd) match {
+      case Nil => false
+      case Cons(h, t) => {
+        if(eqCheck(Cons(hd, Cons(h, t)), sub)) true else hasSubsequence2(t, sub)
+      }
+    }
+  }
+
+  def head[A](l: CustomList[A]): A = {
+    l match {
+      case Nil => sys.error("no head")
+      case Cons(h, t) => h
+    }
+  }
+
+  def isEmpty[A](l: CustomList[A]): Boolean = l match {
+    case Nil => true
+    case Cons(h, t) => false
+  }
 }
 
 object Ex3d2 extends App {
@@ -218,4 +284,13 @@ object Ex3d2 extends App {
   println(CustomList.filter3(CustomList(1,2,3,4,5,6,7,8,9,10))(x => x % 2 != 0))
   println(CustomList.flatMap(CustomList(1,2,3))(x => CustomList(x, x, 2 * x)))
   println(CustomList.zipWith(CustomList(1, 2, 3), CustomList(2, 2, 2))(_ + _))
+
+  val sequence = CustomList(1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,6,1)
+  val subSequence = CustomList(1,2,1,2,1,2,3)
+  var t1 = System.currentTimeMillis()
+  println(CustomList.hasSubsequence(sequence, subSequence))
+  println("first: " + (System.currentTimeMillis() - t1))
+  t1 = System.currentTimeMillis()
+  println(CustomList.hasSubsequence2(sequence, subSequence))
+  println("second: " + (System.currentTimeMillis() - t1))
 }
