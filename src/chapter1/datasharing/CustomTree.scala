@@ -14,7 +14,20 @@ object CustomTree {
 
   def maxValue(tree: CustomTree[Int]): Int = tree match {
     case Leaf(x) => x
-    case Branch(x, y) => maxValue(x) max maxValue(y)
+    case Branch(left, right) => maxValue(left) max maxValue(right)
   }
 
+  def depth[A](tree: CustomTree[A]): Int = {
+    def loop(t: CustomTree[A], n: Int): Int = t match {
+      case Leaf(_) => n
+      case Branch(left, right) => loop(left, n + 1) max loop(right, n + 1)
+    }
+
+    loop(tree, 0)
+  }
+
+  def depth2[A](tree: CustomTree[A]): Int = tree match {
+    case Leaf(_) => 0
+    case Branch(left, right) => 1 + (depth2(left) max depth2(right))
+  }
 }

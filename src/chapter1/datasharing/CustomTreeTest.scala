@@ -5,4 +5,6 @@ object CustomTreeTest extends App {
 
   println(CustomTree.size(tree))
   println(CustomTree.maxValue(tree))
+  println(CustomTree.depth(tree))
+  println(CustomTree.depth2(tree))
 }
