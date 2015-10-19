@@ -7,4 +7,5 @@ object CustomTreeTest extends App {
   println(CustomTree.maxValue(tree))
   println(CustomTree.depth(tree))
   println(CustomTree.depth2(tree))
+  println(CustomTree.map(tree)(x => "str" + x))
 }
