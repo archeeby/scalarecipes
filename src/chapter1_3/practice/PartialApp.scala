@@ -1,4 +1,4 @@
-package chapter1.practice
+package chapter1_3.practice
 
 object PartialApp extends App {
   def partial[A,B,C](a: A, f: (A,B) => C): B => C =

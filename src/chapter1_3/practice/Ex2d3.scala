@@ -1,4 +1,4 @@
-package chapter1.practice
+package chapter1_3.practice
 
 object Ex2d3 extends App {
   //currying

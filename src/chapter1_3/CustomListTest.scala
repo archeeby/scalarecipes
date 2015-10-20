@@ -1,6 +1,6 @@
-package chapter1
+package chapter1_3
 
-import chapter1.datasharing.CustomList
+import chapter1_3.datasharing.CustomList
 
 object CustomListTest extends App {
   val l1 = CustomList(1, 3, 6, 3, 4, 2, -1, 7, 0)
