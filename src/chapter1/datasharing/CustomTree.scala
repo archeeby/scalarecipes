@@ -35,4 +35,23 @@ object CustomTree {
     case Leaf(x) => Leaf(f(x))
     case Branch(left, right) => Branch(map(left)(f), map(right)(f))
   }
+
+  def fold[A, B](tree: CustomTree[A])(f: A => B)(g: (B, B) => B): B = tree match {
+    case Leaf(x) => f(x)
+    case Branch(left, right) => g(fold(left)(f)(g), fold(right)(f)(g))
+  }
+
+  def sizeViaFold[A](tree: CustomTree[A]): Int =
+    fold(tree)(x => 1)(1 + _ + _)
+
+  def maxValueViaFold(tree: CustomTree[Int]): Int =
+    fold(tree)(x => x)(_ max _)
+
+  def depthViaFold[A](tree: CustomTree[A]): Int = {
+    fold(tree)(x => 0)(1 + _ max _)
+  }
+
+  def mapViaFold[A, B](tree: CustomTree[A])(f: A => B): CustomTree[B] =
+    fold(tree)(x => Leaf[B](f(x)): CustomTree[B])(Branch(_, _))
+
 }
