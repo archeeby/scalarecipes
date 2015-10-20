@@ -1,4 +1,4 @@
-package chapter1
+package chapter1.practice
 
 object Ex2d2 extends App {
 

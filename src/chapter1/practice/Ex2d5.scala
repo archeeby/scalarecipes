@@ -1,4 +1,4 @@
-package chapter1
+package chapter1.practice
 
 object Ex2d5 extends App {
   def compose[A,B,C](f: B => C, g: A => B): A => C = {

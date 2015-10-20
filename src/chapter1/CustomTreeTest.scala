@@ -1,4 +1,6 @@
-package chapter1.datasharing
+package chapter1
+
+import chapter1.datasharing.{Branch, CustomTree, Leaf}
 
 object CustomTreeTest extends App {
   val tree = Branch(Branch(Branch(Leaf(8), Leaf(9)), Branch(Leaf(0), Leaf(2))), Branch(Leaf(6), Leaf(1)))
