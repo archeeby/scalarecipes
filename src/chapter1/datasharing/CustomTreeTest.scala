@@ -8,4 +8,9 @@ object CustomTreeTest extends App {
   println(CustomTree.depth(tree))
   println(CustomTree.depth2(tree))
   println(CustomTree.map(tree)(x => "str" + x))
+
+  println(CustomTree.sizeViaFold(tree))
+  println(CustomTree.maxValueViaFold(tree))
+  println(CustomTree.depthViaFold(tree))
+  println(CustomTree.mapViaFold(tree)(x => "str" + x))
 }
