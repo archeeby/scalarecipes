@@ -213,9 +213,8 @@ object CustomList {
 
     dropWhile2(l)(_ == hd) match {
       case Nil => false
-      case Cons(h, t) => {
+      case Cons(h, t) =>
         if(eqCheck(Cons(hd, Cons(h, t)), sub)) true else hasSubsequence2(t, sub)
-      }
     }
   }
 
