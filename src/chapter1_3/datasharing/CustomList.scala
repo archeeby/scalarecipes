@@ -21,7 +21,7 @@ object CustomList {
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
 
-  //returns a tail of
+  //returns a tail of a list
   def tail[A](list: CustomList[A]): CustomList[A] = list match {
     case Nil => Nil
     case Cons(_, Nil) => Nil
@@ -72,7 +72,7 @@ object CustomList {
       case Cons(x, xs) => Cons(x, append(xs, a2))
     }
 
-
+  // returns a list consisting of all but the last element of a list.
   def init[A](l: CustomList[A]): CustomList[A] =
     l match {
       case Nil => Nil
@@ -108,6 +108,7 @@ object CustomList {
     foldLeft(as, 0)((count, _) => count + 1)
   }
 
+  //reverses a list
   def reverse[A](in: CustomList[A]): CustomList[A] =
     foldLeft(in, CustomList[A]())((x, y) => Cons(y, x))
 
@@ -121,6 +122,7 @@ object CustomList {
     foldRight(first, second)(Cons(_, _)) // or   (x, y) => Cons(x, y)
   }
 
+  //concatenates a list of lists to one list
   def concat[A](in: CustomList[CustomList[A]]): CustomList[A] = {
     foldLeft(in, CustomList[A]())(append2(_, _)) // or (x, y) => append2(x, y)
   }
@@ -129,10 +131,12 @@ object CustomList {
     foldRight(in, CustomList[Int]())((x, y) => Cons(x + 1, y))
   }
 
+  // generalizes modifying each element in a list while maintaining the structure of the list
   def map[A,B](as: CustomList[A])(f: A => B): CustomList[B] = {
     foldRight(as, CustomList[B]())((x, y) => Cons(f(x), y))
   }
 
+  //removes elements from a list unless they satisfy a given predicate
   def filter[A](as: CustomList[A])(f: A => Boolean): CustomList[A] = {
     def loop(list: CustomList[A], out: CustomList[A]) : CustomList[A] = {
       list match {
@@ -150,6 +154,8 @@ object CustomList {
     foldRight(as, CustomList[A]())((x, y) => if (f(x)) Cons(x, y) else y)
   }
 
+  //works like map except that the function given will return a list instead of a single result,
+  // and that list should be inserted into the final resulting list
   def flatMap[A,B](as: CustomList[A])(f: A => CustomList[B]): CustomList[B] = {
     concat(foldRight(as, CustomList[CustomList[B]]())((x, y) => Cons(f(x), y)))
   }
@@ -159,13 +165,14 @@ object CustomList {
     flatMap(list)((x) => if (f(x)) CustomList[A](x) else Nil)
   }
 
+  // accepts two lists and constructs a new list by apply a function for corresponding elements
   def zipWith[A](first: CustomList[A], second: CustomList[A])(f: (A, A) => A): CustomList[A] = (first, second) match {
     case (_, Nil) => Nil
     case (Nil, _) => Nil
     case (Cons(x1, xs1), Cons(x2, xs2)) => Cons(f(x1, x2), zipWith(xs1, xs2)(f))
   }
 
-
+  //checking whether a list contains another list as a subsequence
   def hasSubsequence[A](sup: CustomList[A], sub: CustomList[A]): Boolean = {
     @annotation.tailrec
     def find(list: CustomList[A], subList: CustomList[A], stepsLeft: Integer) : Boolean = {
