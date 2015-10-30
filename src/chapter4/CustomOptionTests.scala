@@ -3,8 +3,11 @@ package chapter4
 import chapter4.datamodel.{CustomNone, CustomSome, CustomOption}
 
 object CustomOptionTests extends App {
+  val seq1 = Seq(1.0, 2.0, 5.0)
+  val seq2 = Seq[Double](7, 7, 7, 7, 7)
+  val num = -2.0
 
-  println(CustomOption.mean(Seq(1.0, 2.0, 5.0)))
+  println(CustomOption.mean(seq1))
   println(CustomOption.mean(null))
 
   val val1 = CustomSome(5)
@@ -30,4 +33,14 @@ object CustomOptionTests extends App {
 
   println("filter:")
   println(val1.filter(x => x != 5))
+
+  println("variance:")
+  println(CustomOption.variance(seq1))
+  println(CustomOption.variance(seq2))
+
+  println("lift:")
+  val abs:  Double => Double = math.abs
+  val absWithOption: CustomOption[Double] => CustomOption[Double] = CustomOption.lift(math.abs)
+  println(abs(num))
+  println(absWithOption(CustomSome(num)))
 }
