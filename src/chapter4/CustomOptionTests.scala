@@ -1,5 +1,6 @@
 package chapter4
 
+import chapter1_3.datasharing.CustomList
 import chapter4.datamodel.{CustomNone, CustomSome, CustomOption}
 
 object CustomOptionTests extends App {
@@ -19,7 +20,6 @@ object CustomOptionTests extends App {
 
   println("flatMap:")
   println(val1.flatMap(x => CustomSome(x + 2)))
-  println(val1.flatMap(x => CustomNone))
   println(val2.flatMap(x => CustomSome(x)))
   println(val2.flatMap(x => CustomNone))
 
@@ -43,4 +43,8 @@ object CustomOptionTests extends App {
   val absWithOption: CustomOption[Double] => CustomOption[Double] = CustomOption.lift(math.abs)
   println(abs(num))
   println(absWithOption(CustomSome(num)))
+
+/*  println("sequence:")
+  val list = CustomList(CustomSome(1), CustomSome(0), CustomSome(10), CustomSome(-1))
+  println(CustomOption.sequence(list))*/
 }

@@ -1,5 +1,7 @@
 package chapter4.datamodel
 
+import chapter1_3.datasharing.{Cons, Nil, CustomList}
+
 sealed trait CustomOption[+A] { self =>
   //apply f if the CustomOption is not CustomNone
   def map[B](f: A => B): CustomOption[B] = self match {
@@ -59,4 +61,41 @@ object CustomOption {
 
   //turns a function f of type A => B into a function of type Option[A] => Option[B]
   def lift[A,B](f: A => B): CustomOption[A] => CustomOption[B] = _ map f
+
+  //combines two CustomOption values using a binary function; if either CustomOption value is CustomNone, then the return value is too.
+  def map2[A,B,C](a: CustomOption[A], b: CustomOption[B])(f: (A, B) => C): CustomOption[C] = (a, b) match {
+    case (CustomSome(x), CustomSome(y)) => CustomSome(f(x, y))
+    case _ => CustomNone
+  }
+
+  //TODO need to sort out
+  def map3[A,B,C](a: CustomOption[A], b: CustomOption[B])(f: (A, B) => C): CustomOption[C] =
+    a flatMap (x => b map (y => f(x, y)))
+
+  def map31[A,B,C](a: CustomOption[A], b: CustomOption[B])(f: (A, B) => C): CustomOption[C] =
+    for {
+      x <- a
+      y <- b
+    } yield f(x, y)
+
+/*  def map1[A,B](a: CustomOption[A])(f: A => B): CustomOption[B] =
+    a map f
+
+  def map4[A,B,C,D](a: CustomOption[A], b: CustomOption[B], c: CustomOption[C])(f: (A, B, C) => D): CustomOption[D] =
+    a flatMap (x => b flatMap (y => c map (z => f(x,y,z)))) */
+
+/*  def sequence[A](a: CustomList[CustomOption[A]]): CustomOption[CustomList[A]] = {
+    def loop(list: CustomList[CustomOption[A]]): CustomList[A] = list match {
+      case Nil => Nil
+      case Cons(optX, optXS) => (optX, optXS) match {
+        case (CustomNone, _) => Nil
+        case (CustomSome(h), CustomSome(t)) => Cons(h, loop(optXS))
+      }
+    }
+
+    loop(a) match {
+      case Nil => CustomNone
+      case Cons(h, t) => CustomSome(Cons(h, t))
+    }
+  }*/
 }
