@@ -84,18 +84,21 @@ object CustomOption {
   def map4[A,B,C,D](a: CustomOption[A], b: CustomOption[B], c: CustomOption[C])(f: (A, B, C) => D): CustomOption[D] =
     a flatMap (x => b flatMap (y => c map (z => f(x,y,z)))) */
 
-/*  def sequence[A](a: CustomList[CustomOption[A]]): CustomOption[CustomList[A]] = {
-    def loop(list: CustomList[CustomOption[A]]): CustomList[A] = list match {
-      case Nil => Nil
-      case Cons(optX, optXS) => (optX, optXS) match {
-        case (CustomNone, _) => Nil
-        case (CustomSome(h), CustomSome(t)) => Cons(h, loop(optXS))
-      }
-    }
-
-    loop(a) match {
+/*  def sequence[A](list: CustomList[CustomOption[A]]): CustomOption[CustomList[A]] = {
+    CustomList.map(list) {
+      case CustomSome(t) => t
+    } match {
       case Nil => CustomNone
-      case Cons(h, t) => CustomSome(Cons(h, t))
+      case Cons(x, y) => CustomSome(Cons(x, y))
     }
   }*/
+
+  def sequence[A](list: CustomList[CustomOption[A]]): CustomOption[CustomList[A]] = {
+    CustomList.map(list) {
+      case CustomSome(t) => t
+    } match {
+      case Nil => CustomNone
+      case Cons(x, y) => CustomSome(Cons(x, y))
+    }
+  }
 }

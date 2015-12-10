@@ -44,7 +44,13 @@ object CustomOptionTests extends App {
   println(abs(num))
   println(absWithOption(CustomSome(num)))
 
-/*  println("sequence:")
-  val list = CustomList(CustomSome(1), CustomSome(0), CustomSome(10), CustomSome(-1))
-  println(CustomOption.sequence(list))*/
+  println("sequence:")
+  val list1 = CustomList[CustomOption[Int]](CustomSome(1), CustomSome(0), CustomSome(10), CustomSome(-1))
+  println(CustomOption.sequence(list1))
+
+  val list2 = CustomList[CustomOption[Int]](CustomSome(1), CustomNone, CustomSome(0), CustomSome(-1))
+  println(CustomOption.sequence(list2))
+
+  val list3 = CustomList()
+  println(CustomOption.sequence(list3))
 }
