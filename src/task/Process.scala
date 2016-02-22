@@ -61,26 +61,10 @@ object Process extends App {
     }
   }
 
-  def generate(input: List[IpModel]) : List[OutputModel] = {
-    @tailrec
-    def go(segment: String, list: List[IpModel], output: List[OutputModel]): List[OutputModel] = list match {
-      case x :: xs =>
-        x._6 match {
-          case IpAddressType.OPENING => go(x._5, xs, output)
-          case IpAddressType.INNER =>
-            if (segment != null) go(segment, xs, (x._5, segment) :: output)
-            else go(segment, xs, output)
-          case IpAddressType.ENDING => go(null, xs, output)
-        }
-      case Nil => output
-    }
-
-    go(null, input, List[OutputModel]())
-  }
-
   def remove(element: String, list: List[String]) = list diff List(element)
 
   def create(list: List[String], model: IpModel) : List[OutputModel] = {
+    @tailrec
     def go(l: List[String], output: List[OutputModel]) : List[OutputModel] = l match {
       case x :: xs => go(xs, (model._5, x) :: output)
       case Nil => output
@@ -105,14 +89,24 @@ object Process extends App {
 
   val t = System.currentTimeMillis()
 
-  val rangeLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\complexRanges.tsv")
-  val transactionLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\complexTransactions.tsv")
+  val rangeLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\ranges10k6.tsv")
+  println("Read ranges (sec): " + (System.currentTimeMillis() - t) / 1000)
+
+  val transactionLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\transactions.tsv")
+  println("Read transactions (sec): " + (System.currentTimeMillis() - t) / 1000)
 
   val ranges = parseAll(rangeLines.getOrElse(List[String]()), rangesRegex)(parseRange)
+  println("Parse ranges (sec): " + (System.currentTimeMillis() - t) / 1000)
+
   val transactions = parseAll(transactionLines.getOrElse(Nil), transactionsRegex)(parseTransactions)
+  println("Parse transactions (sec): " + (System.currentTimeMillis() - t) / 1000)
 
   val fullSortedList = (ranges ::: transactions).sortBy(x => (x._1, x._2, x._3, x._4, x._6))
+  println("Lists concatenation + sorting (sec): " + (System.currentTimeMillis() - t) / 1000)
 
-  writeToFile("d:\\workspace-scala\\scalarecipes\\src\\task\\output.tsv", generateFull(fullSortedList).distinct)
-  println("Time (sec): " + (System.currentTimeMillis() - t) / 1000)
+  val outputList = generateFull(fullSortedList).distinct
+  println("Processing (sec): " + (System.currentTimeMillis() - t) / 1000)
+
+  writeToFile("d:\\workspace-scala\\scalarecipes\\src\\task\\output.tsv", outputList)
+  println("Write to file (sec): " + (System.currentTimeMillis() - t) / 1000)
 }
