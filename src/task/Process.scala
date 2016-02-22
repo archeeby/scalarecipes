@@ -78,16 +78,41 @@ object Process extends App {
     go(null, input, List[OutputModel]())
   }
 
+  def remove(element: String, list: List[String]) = list diff List(element)
+
+  def create(list: List[String], model: IpModel) : List[OutputModel] = {
+    def go(l: List[String], output: List[OutputModel]) : List[OutputModel] = l match {
+      case x :: xs => go(xs, (model._5, x) :: output)
+      case Nil => output
+    }
+
+    go(list, List[OutputModel]())
+  }
+
+  def generateFull(input: List[IpModel]) : List[OutputModel] = {
+    def go(segments: List[String], list: List[IpModel], output: List[OutputModel]): List[OutputModel] = list match {
+      case x :: xs =>
+        x._6 match {
+          case IpAddressType.OPENING => go(x._5 :: segments, xs, output)
+          case IpAddressType.INNER => go(segments, xs, create(segments, x) ::: output)
+          case IpAddressType.ENDING => go(remove(x._5, segments), xs, output)
+        }
+      case Nil => output
+    }
+
+    go(List[String](), input, List[OutputModel]())
+  }
+
   val t = System.currentTimeMillis()
 
-  val rangeLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\ranges10k6.tsv")
-  val transactionLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\transactions.tsv")
+  val rangeLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\complexRanges.tsv")
+  val transactionLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\complexTransactions.tsv")
 
   val ranges = parseAll(rangeLines.getOrElse(List[String]()), rangesRegex)(parseRange)
   val transactions = parseAll(transactionLines.getOrElse(Nil), transactionsRegex)(parseTransactions)
 
-  val fullSortedList = ranges ::: transactions
+  val fullSortedList = (ranges ::: transactions).sortBy(x => (x._1, x._2, x._3, x._4, x._6))
 
-  writeToFile("d:\\workspace-scala\\scalarecipes\\src\\task\\output.tsv", generate(fullSortedList))
+  writeToFile("d:\\workspace-scala\\scalarecipes\\src\\task\\output.tsv", generateFull(fullSortedList).distinct)
   println("Time (sec): " + (System.currentTimeMillis() - t) / 1000)
 }

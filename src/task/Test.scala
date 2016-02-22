@@ -10,7 +10,7 @@ object Test extends App {
   val ranges = Process.parseAll(rangeLines.getOrElse(List[String]()), rangesRegex)(Process.parseRange)
   val transactions = Process.parseAll(transactionLines.getOrElse(Nil), transactionsRegex)(Process.parseTransactions)
 
-  val fullSortedList = (ranges ::: transactions).sortBy(x => (x._1, x._2, x._3, x._4, x._5, x._6))
+  val fullSortedList = (ranges ::: transactions).sortBy(x => (x._1, x._2, x._3, x._4, x._6))
 
   for (x <- fullSortedList) {
     println(x)
