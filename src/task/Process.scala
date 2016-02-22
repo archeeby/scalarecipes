@@ -6,40 +6,37 @@ import task.IpAddressType._
 
 import scala.annotation.tailrec
 import scala.io.Source
+import scala.util.matching.Regex
 
 object Process extends App {
   type IpModel = (Short, Short, Short, Short, String, IpAddressType)
   type OutputModel = (String, String)
 
-  def parseAllRanges( args: List[String] ) : List[IpModel] = {
-    var list = List[IpModel]()
+  val rangesRegex = """(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\-(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\t(.*?)""".r
+  val transactionsRegex = """.*?(.*?)\t(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}).*?""".r
 
-    val regex = """(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\-(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\t(.*?)""".r
-    for (x <- args) {
-      x match {
-        case regex(ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, name) =>
-          list = (ip1.toShort, ip2.toShort, ip3.toShort, ip4.toShort, name, IpAddressType.OPENING) ::
-            (ip5.toShort, ip6.toShort, ip7.toShort, ip8.toShort, name, IpAddressType.ENDING) ::
-            list
-        case _ => println("No match for " + x)
-      }
+  def parseAll(list: List[String], regex: Regex)(f: (String, Regex) => List[IpModel]) : List[IpModel] = {
+    @tailrec
+    def go(input: List[String], output: List[IpModel]) : List[IpModel] = input match {
+      case x :: xs =>
+        go(xs, f(x, regex) ::: output)
+      case Nil => output
     }
-    list
+
+    go(list, List[IpModel]())
   }
 
-  def parseAllTransactions( args: List[String] ) : List[IpModel] = {
-    var list = List[(Short, Short, Short, Short, String, IpAddressType)]()
+  def parseRange(str: String, regex: Regex) : List[IpModel] = str match {
+    case regex(ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, name) =>
+      (ip1.toShort, ip2.toShort, ip3.toShort, ip4.toShort, name, IpAddressType.OPENING) ::
+        (ip5.toShort, ip6.toShort, ip7.toShort, ip8.toShort, name, IpAddressType.ENDING) :: List[IpModel]()
+    case _ => List[IpModel]()
+  }
 
-    val regex = """.*?(.*?)\t(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}).*?""".r
-    for (x <- args) {
-      x match {
-        case regex(userId, ip1, ip2, ip3, ip4) =>
-          list = (ip1.toShort, ip2.toShort, ip3.toShort, ip4.toShort, userId, IpAddressType.INNER) :: list
-        case _ => println("No match for " + x)
-      }
-    }
-
-    list
+  def parseTransactions(str: String, regex: Regex) : List[IpModel] = str match {
+    case regex(userId, ip1, ip2, ip3, ip4) =>
+      (ip1.toShort, ip2.toShort, ip3.toShort, ip4.toShort, userId, IpAddressType.INNER) :: List[IpModel]()
+    case _ => List[IpModel]()
   }
 
   def readFileToList(filename: String) : Option[List[String]] = {
@@ -66,7 +63,7 @@ object Process extends App {
 
   def generate(input: List[IpModel]) : List[OutputModel] = {
     @tailrec
-    def go(segment: String, list: List[IpModel], output: List[OutputModel]) : List[OutputModel] = list match {
+    def go(segment: String, list: List[IpModel], output: List[OutputModel]): List[OutputModel] = list match {
       case x :: xs =>
         x._6 match {
           case IpAddressType.OPENING => go(x._5, xs, output)
@@ -81,10 +78,16 @@ object Process extends App {
     go(null, input, List[OutputModel]())
   }
 
-  val rangeLines = readFileToList("D:\\Docs\\scala\\ranges.tsv")
-  val transactionLines = readFileToList("D:\\Docs\\scala\\transactions.tsv")
+  val t = System.currentTimeMillis()
 
-  val l = (parseAllRanges(rangeLines.getOrElse(List[String]())) ::: parseAllTransactions(transactionLines.getOrElse(Nil))).sortBy(x => (x._1, x._2, x._3, x._4, x._5, x._6))
+  val rangeLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\ranges10k6.tsv")
+  val transactionLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\transactions.tsv")
 
-  writeToFile("D:\\Docs\\scala\\output.tsv", generate(l))
+  val ranges = parseAll(rangeLines.getOrElse(List[String]()), rangesRegex)(parseRange)
+  val transactions = parseAll(transactionLines.getOrElse(Nil), transactionsRegex)(parseTransactions)
+
+  val fullSortedList = ranges ::: transactions
+
+  writeToFile("d:\\workspace-scala\\scalarecipes\\src\\task\\output.tsv", generate(fullSortedList))
+  println("Time (sec): " + (System.currentTimeMillis() - t) / 1000)
 }
