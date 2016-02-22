@@ -74,6 +74,7 @@ object Process extends App {
   }
 
   def generateFull(input: List[IpModel]) : List[OutputModel] = {
+    @tailrec
     def go(segments: List[String], list: List[IpModel], output: List[OutputModel]): List[OutputModel] = list match {
       case x :: xs =>
         x._6 match {
@@ -90,23 +91,23 @@ object Process extends App {
   val t = System.currentTimeMillis()
 
   val rangeLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\ranges10k6.tsv")
-  println("Read ranges (sec): " + (System.currentTimeMillis() - t) / 1000)
+  println("Read ranges (msec): " + (System.currentTimeMillis() - t))
 
   val transactionLines = readFileToList("d:\\workspace-scala\\scalarecipes\\src\\task\\transactions.tsv")
-  println("Read transactions (sec): " + (System.currentTimeMillis() - t) / 1000)
+  println("Read transactions (msec): " + (System.currentTimeMillis() - t))
 
   val ranges = parseAll(rangeLines.getOrElse(List[String]()), rangesRegex)(parseRange)
-  println("Parse ranges (sec): " + (System.currentTimeMillis() - t) / 1000)
+  println("Parse ranges (msec): " + (System.currentTimeMillis() - t))
 
   val transactions = parseAll(transactionLines.getOrElse(Nil), transactionsRegex)(parseTransactions)
-  println("Parse transactions (sec): " + (System.currentTimeMillis() - t) / 1000)
+  println("Parse transactions (msec): " + (System.currentTimeMillis() - t))
 
   val fullSortedList = (ranges ::: transactions).sortBy(x => (x._1, x._2, x._3, x._4, x._6))
-  println("Lists concatenation + sorting (sec): " + (System.currentTimeMillis() - t) / 1000)
+  println("Lists concatenation + sorting (msec): " + (System.currentTimeMillis() - t))
 
   val outputList = generateFull(fullSortedList).distinct.sortBy(x => x._2)
-  println("Processing (sec): " + (System.currentTimeMillis() - t) / 1000)
+  println("Processing (msec): " + (System.currentTimeMillis() - t))
 
   writeToFile("d:\\workspace-scala\\scalarecipes\\src\\task\\output.tsv", outputList)
-  println("Write to file (sec): " + (System.currentTimeMillis() - t) / 1000)
+  println("Write to file (msec): " + (System.currentTimeMillis() - t))
 }
