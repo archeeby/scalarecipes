@@ -104,7 +104,7 @@ object Process extends App {
   val fullSortedList = (ranges ::: transactions).sortBy(x => (x._1, x._2, x._3, x._4, x._6))
   println("Lists concatenation + sorting (sec): " + (System.currentTimeMillis() - t) / 1000)
 
-  val outputList = generateFull(fullSortedList).distinct
+  val outputList = generateFull(fullSortedList).distinct.sortBy(x => x._2)
   println("Processing (sec): " + (System.currentTimeMillis() - t) / 1000)
 
   writeToFile("d:\\workspace-scala\\scalarecipes\\src\\task\\output.tsv", outputList)
